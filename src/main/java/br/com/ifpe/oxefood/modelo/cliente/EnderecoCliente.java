@@ -1,6 +1,8 @@
-package br.com.ifpe.oxefood.modelo.produto;
+package br.com.ifpe.oxefood.modelo.cliente;
 
 import org.hibernate.annotations.SQLRestriction;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import br.com.ifpe.oxefood.util.entity.EntidadeAuditavel;
 import jakarta.persistence.Column;
@@ -13,7 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 @Entity //transforma a classe em uma entidade persistível pela jpa, através dessa anotação consigo usar objetos para gravar, alterar no banco de dados 
-@Table(name = "Produto") // especifica ue essa classe vai ser convertida em uma tabela no banco
+@Table(name = "Endereço") // especifica ue essa classe vai ser convertida em uma tabela no banco
 @SQLRestriction("habilitado = true") // serve para toda consulta feita nessa tabela, ser filtrada com o requisito mencionado (acrescenta uma clausula where)
 
 
@@ -22,24 +24,30 @@ import lombok.Setter;
 @Setter // adicona metodo set para cada atributo abaixo
 @AllArgsConstructor
 @NoArgsConstructor
-public class Produto extends EntidadeAuditavel {
+public class EnderecoCliente extends EntidadeAuditavel {
+    @JsonIgnore
    @ManyToOne
-  private CategoriaProduto categoria;
-  @Column // cria uma coluna na tabela para esse atributo
-   private String titulo;
-
-   @Column (name= "Codigo") //altera o nome da coluna
-   private String codigoProduto;
+   private Cliente cliente;
 
    @Column
-   private String descricao;
+   private String rua;
 
    @Column
-   private Double valorUnitario;
+   private String numero;
 
    @Column
-   private int tempoMinimo;
+   private String bairro;
+   
+   @Column
+   private String cep;
+
+   @Column
+   private String cidade;
+
+   @Column
+   private String estado;
+
+   @Column
+   private String complemento;
   
-   @Column
-   private int tempoMaximo;
 }

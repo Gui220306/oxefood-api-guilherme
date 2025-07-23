@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.ifpe.oxefood.util.exception.ProdutoException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -14,6 +15,11 @@ public class ProdutoService {
 
    @Transactional //Quando colocada em cima de uma função, ela abre um escopo de transação no banco para a mesma (ou tudo funciona, ounada vai ser rodado)
    public Produto save(Produto produto) {
+    if (produto.getValorUnitario() < 10) {
+        //interrompe a execução do código e exibe a mensagem
+	    throw new ProdutoException(ProdutoException.MSG_VALOR_MINIMO_PRODUTO);
+	}
+
 
        produto.setHabilitado(Boolean.TRUE);
       
@@ -38,6 +44,7 @@ public class ProdutoService {
 
       Produto produto = repository.findById(id).get(); //vai colsultar o cliente no banco
       produto.setTitulo(produtoAlterado.getTitulo());
+      produto.setCategoria(produtoAlterado.getCategoria());
       produto.setCodigoProduto(produtoAlterado.getCodigoProduto());
       produto.setDescricao(produtoAlterado.getDescricao());
       produto.setValorUnitario(produtoAlterado.getValorUnitario());

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.ifpe.oxefood.modelo.produto.CategoriaProdutoService;
 import br.com.ifpe.oxefood.modelo.produto.Produto;
 import br.com.ifpe.oxefood.modelo.produto.ProdutoService;
 
@@ -25,10 +26,22 @@ public class ProdutoController {
           @Autowired //vai instanciar objetos do tipo ClienteService e colocar dentro da variável, para que ela seja utilizada em  todas funções do controller 
    private ProdutoService produtoService;
 
+   @Autowired
+   private CategoriaProdutoService categoriaProdutoService;
+
+
    @PostMapping//especifica que essa função vai receber requisição post
    public ResponseEntity<Produto> save(@RequestBody ProdutoRequest request) {
+       Produto produtoNovo = request.build();
+       produtoNovo.setCategoria(categoriaProdutoService.obterPorID(request.getIdCategoria())); //vai mandar o produto com a categoria apra o service
+  //validar o produto antes de salvar
+       try {
+           Produto produto = produtoService.save(produtoNovo); //chama a função save do service, passando o produto novo
+       } catch (Exception e) {
+        System.out.println(e.getMessage());
+    }
 
-       Produto produto = produtoService.save(request.build());
+       Produto produto = produtoService.save(produtoNovo);
        return new ResponseEntity<Produto>(produto, HttpStatus.CREATED);
    }
    @GetMapping
@@ -44,7 +57,10 @@ public class ProdutoController {
    @PutMapping("/{id}") //informar via url o id do produto | abaixo ele passa os dados do produto alterado no corpo da requisição
  public ResponseEntity<Produto> update(@PathVariable("id") Long id, @RequestBody ProdutoRequest request) {
   //passando os dados para a função update
-       produtoService.update(id, request.build());
+       
+       Produto produto = request.build();
+       produto.setCategoria(categoriaProdutoService.obterPorID(request.getIdCategoria())); //envia o produto com categoria para ser alterado
+       produtoService.update(id, produto);
        return ResponseEntity.ok().build();
  }
 @DeleteMapping("/{id}")
